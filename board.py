@@ -1,5 +1,5 @@
-from MCP4021 import MCP4021
-from INA219 import INA219_Voltage, INA219_Current
+from mcp4021 import MCP4021
+from ina219 import INA219_Voltage, INA219_Current
 
 class channel:
     def __init__(self, pot, meters):
@@ -10,7 +10,7 @@ class Board:
     
     __MAX_CHANNEL_NR = 5
     
-    __channel_cs_numbers = [18, 22, 28, 27, 26]
+    __channel_cs_numbers = [18, 22, 28, 27, 26] # [26, 27, 28, 22, 18]
     __channel_addresses = [0x44, 0x43, 0x42, 0x41, 0x40]
         
     def __init__(self, i2c):
@@ -21,25 +21,35 @@ class Board:
             m = {'c':INA219_Current(i2c, channel_addr), 'v':INA219_Voltage(i2c, channel_addr)}
             self.channels.append(channel(pot = p, meters = m))
         
-        self.channel = 0
-        self.param = 'c'
+        self._cahnnel = 0
+        self._param = 'v'
+        self.current_pot = self.channels[self._cahnnel].pot
+        self.current_meter = self.channels[self._cahnnel].meters[self._param]
         
+    def set_channel(self, chan_nr):
+        self._cahnnel = chan_nr
+        self.current_pot = self.channels[chan_nr].pot
+        self.current_meter = self.channels[chan_nr].meters[self._param]
+    def set_param(self, param):
+        self._param = param
+        self.current_meter = self.channels[self._cahnnel].meters[param]        
     def set(self, value):
-        self.channels[self._channel].pot.set(value)
+        self.current_pot.set(value)
     def inc(self):
-        self.channels[self._channel].pot.inc(1)
+        self.current_pot.inc(1)
     def dec(self):
-        self.channels[self._channel].pot.dec(1)
+        self.current_pot.dec(1)
     def save(self):
-        delf.channels[self._channel].pot.save()
+        for chan in self.channels:
+            chan.pot.save()
     def measure(self):
-        self.channels[self._channel].meters[self._param].measure()
+        return self.current_meter.measure()
     def callib(self, value):
-        self.channels[self._channel].meters[self._param].callib(value)
+        self.current_meter.callib(value)
     def config(self, name, value):
-        self.channels[self._channel].meters[self._param].config(name, value)
+        self.current_meter.config(name, value)
     def coeff(self):
-        self.channels[self._channel].meters[self._param].read_coefficient()
+        return self.current_meter.read_coefficient()
     def raw(self):
-        self.channels[self._channel].meters[self._param].measure_raw()
+        return self.current_meter.measure_raw()
         

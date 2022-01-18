@@ -1,42 +1,40 @@
-import machine
-import time
+from machine import Pin, SoftI2C
 from board import Board
 from keyboard import keyboard
+from display import Display
 
-sda=machine.Pin(8)
-scl=machine.Pin(9)
-i2c=machine.I2C(0, sda=sda, scl=scl, freq=400000)
+sda=Pin(20)
+scl=Pin(21)
+i2c=SoftI2C(sda=sda, scl=scl, freq=100000)
 
-My_Board = Board(i2c)
-My_keyboard = keyboard()
+board = Board(i2c)
+display = Display(i2c)
+keyboard = keyboard()
+channel = 0
 
 while True:
-    butt_read = My_keyboard.read():
-    if butt_read == 'UP' and My_board.channel < 4:
-        My_board.channel += 1
-    elif butt_read == 'DOWN' and My_board.channel > 0:
-        My_board.channel -= 1
+    butt_read = keyboard.read()
+    if butt_read == 'UP' and channel < 4:
+        channel += 1
+        board.set_channel(channel)
+    elif butt_read == 'DOWN' and channel > 0:
+        channel -= 1
+        board.set_channel(channel)
     elif butt_read == 'RIGHT':
-        My_board.inc()
+        board.inc()
     elif butt_read == 'LEFT':
-        My_board.dec()
+        board.dec()
     elif butt_read == 'MIDDLE':
-        My_board.save()
+        board.save()
     else:
         pass
     
-    My_board.param = 'v'
-    voltage = My_board.measure()
+    board.set_param('v')
+    voltage = board.measure()
 
-    My_board.param = 'c'
-    current = My_board.measure()
-
+    board.set_param('c')
+    current = board.measure()
     if current > 10000:
         current = 0
-        
-    print(f"Channel: {My_board.channel}, Voltage: {voltage/1000}, Current: {Current/1000}")
-        
-    time.sleep(0.05)
-        
-        
-            
+    
+    display.show(channel, voltage/1000, current/1000)

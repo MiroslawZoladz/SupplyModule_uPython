@@ -1,4 +1,4 @@
-HELP = "c|v: Set set up current electrical parameter\n"\
+HELP = "v/c: Set set up current electrical parameter\n"\
             "ch : set up current channel\n"\
             "s : set up value of c/v (returns err if is the same)\n"\
             "m : measurement\n"\
@@ -12,11 +12,11 @@ import machine
 import time
 from board import Board
 
-sda=machine.Pin(8)
-scl=machine.Pin(9)
-i2c=machine.I2C(0, sda=sda, scl=scl, freq=400000)
+sda=machine.Pin(20)
+scl=machine.Pin(21)
+i2c=machine.SoftI2C(sda=sda, scl=scl, freq=100000)
 
-My_board = Board(i2c)
+board = Board(i2c)
 
 while True:
     
@@ -25,28 +25,28 @@ while True:
     tokens = command.split()
     
     if tokens[0] == 'ch':
-        My_board.channel = int(tokens[1])
+        board.set_channel(int(tokens[1]))
     elif tokens[0] == 'v':
-        My_board.param = 'v'
+        board.set_param(tokens[0])
     elif tokens[0] == 'c':
-        My_board.param = 'c'
+        board.set_param(tokens[0])
     elif tokens[0] == 's':
-        My_board.set(int(tokens[1]))
+        board.set(int(tokens[1]))
     elif tokens[0] == 'm':
-        val = My_board.measure()
+        val = board.measure()
         if val>10000:
             val  = 0
         print(val)
     elif tokens[0] == 'l':
-        My_board.callib(int(tokens[1]))
+        board.callib(int(tokens[1]))
     elif tokens[0] == 'g':
-        My_board.config(tokens[1], int(tokens[2]))
+        board.config(tokens[1], int(tokens[2]))
     elif tokens[0] == 'f':
-        print(My_board.coeff())
+        print(board.coeff())
     elif tokens[0] == 'r':
-        print(My_board.raw())
+        print(board.raw())
     elif tokens[0] == 'a':
-        My_board.save()
+        board.save()
     else:
         print(HELP)
         
