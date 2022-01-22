@@ -1,7 +1,7 @@
 import machine
 from ssd1306 import SSD1306_I2C
 import framebuf
-import freesans20
+import freesans24
 import writer
 
 class Display:
@@ -10,11 +10,11 @@ class Display:
     
     def __init__(self, i2c):    
         self._oled = SSD1306_I2C(128, 64, i2c)
-        self._font_writer = writer.Writer(self._oled, freesans20)
+        self._font_writer = writer.Writer(self._oled, freesans24)
         
     def show(self, chan_nr, curr, vol):
         self._oled.fill(0)
-        for x,y,t in zip((0,60,60),(24,10,40),(self.__CHAN_NAMES[chan_nr],f"{curr:.3f}V",f"{vol:.3f}A")):
+        for x,y,t in zip((0,48,48),(22,8,40),(self.__CHAN_NAMES[chan_nr],f"{curr:.3f}V",f"{vol:.3f}A")):
             self._font_writer.set_textpos(x, y)
             self._font_writer.printstring(t)
         self._oled.show()
