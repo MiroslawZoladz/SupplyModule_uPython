@@ -12,9 +12,13 @@ import machine
 import time
 from board import Board
 
+pwm = PWM(Pin(10))
+pwm.freq(10000)
+pwm.duty_u16(pow(2,16)//10)
+
 sda=machine.Pin(20)
 scl=machine.Pin(21)
-i2c=machine.SoftI2C(sda=sda, scl=scl, freq=100000)
+i2c=machine.SoftI2C(sda=sda, scl=scl, freq=400000)
 
 board = Board(i2c)
 
