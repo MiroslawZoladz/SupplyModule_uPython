@@ -8,7 +8,7 @@ HELP = "v/c: Set set up current electrical parameter\n"\
             "f : read coefficient\n"\
             "g : [brng/pg/badc] config device\n"
 
-import machine
+from machine import Pin, PWM, SoftI2C
 import time
 from board import Board
 
@@ -16,15 +16,15 @@ pwm = PWM(Pin(10))
 pwm.freq(10000)
 pwm.duty_u16(pow(2,16)//10)
 
-sda=machine.Pin(20)
-scl=machine.Pin(21)
-i2c=machine.SoftI2C(sda=sda, scl=scl, freq=400000)
+sda=Pin(20)
+scl=Pin(21)
+i2c=SoftI2C(sda=sda, scl=scl, freq=400000)
 
 board = Board(i2c)
 
 while True:
     
-    command = input("Give command:")
+    command = input("cmd?:")
     
     tokens = command.split()
     

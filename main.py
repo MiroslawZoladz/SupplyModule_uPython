@@ -4,12 +4,12 @@ from keyboard import keyboard
 from display import Display
 
 pwm = PWM(Pin(10))
-pwm.freq(200_000)
-pwm.duty_u16(pow(2,16)//25)
+pwm.freq(10000)
+pwm.duty_u16(pow(2,16)//10)
 
 sda=Pin(20)
 scl=Pin(21)
-i2c=SoftI2C(sda=sda, scl=scl, freq=400_000)
+i2c=SoftI2C(sda=sda, scl=scl, freq=400000)
 
 board = Board(i2c)
 display = Display(i2c)
